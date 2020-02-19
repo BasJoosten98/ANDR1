@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:padding="5dp"
+    android:background="@color/colorPrimaryDark">
+
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SUBJECT"
+        android:textColor="@color/colorTitle"/>
+
+    <TextView
+        android:id="@+id/room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ROOM"
+        android:textColor="@color/colorTitle"/>
+
+    <TextView
+        android:id="@+id/teacher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TEACHER"
+        android:textColor="@color/colorTitle"/>
+
+    <TextView
+        android:id="@+id/from"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="STARTS AT"
+        android:textColor="@color/colorTitle" />
+
+    <TextView
+        android:id="@+id/until"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ENDS AT"
+        android:textColor="@color/colorTitle" />
+
+</LinearLayout>
