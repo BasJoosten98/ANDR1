@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +31,17 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat year = new SimpleDateFormat("yyyy");
 
         dateDisplay.setText("Today is " + dayOfWeek.format(TODAY) + ", " + dayOfMonth.format(TODAY) + " " + month.format(TODAY) + " " + year.format(TODAY));
+
+        Button btnReadNews = findViewById(R.id.read_news_button);
+        btnReadNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+                intent.putExtra("token", fontysToken);
+                startActivity(intent);
+            }
+        });
+
 
         //FINAL (get token)
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
