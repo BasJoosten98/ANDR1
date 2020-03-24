@@ -50,7 +50,7 @@ public class ScheduleDayAdapter extends BaseAdapter {
 
         day.setText(item.getDay());
         date.setText(item.toString());
-        nrOfActivities.setText(item.getNumberOfLectures() + " courses scheduled today");
+        nrOfActivities.setText(item.getNumberOfLectures() + " lectures scheduled");
 
         return convertView;
     }

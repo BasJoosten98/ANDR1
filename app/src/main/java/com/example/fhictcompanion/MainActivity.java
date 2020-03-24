@@ -10,19 +10,14 @@ import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements IPersonContext {
+public class MainActivity extends AppCompatActivity implements IPersonContext, IScheduleContext {
     private static final Date TODAY = new Date();
-    private static final int NEXT_DAY = 1;
 
-    private Calendar calendar;
-    private List<ScheduleDayItem> scheduleItems;
+    private Schedule schedule;
 
     private int REQUESTCODE_GET_TOKEN = 1;
     private String fontysToken;
@@ -34,50 +29,6 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
 
         displayTodaysDate();
 
-        calendar = Calendar.getInstance();
-        calendar.setTime(TODAY);
-
-        ScheduleDayItem day1 = new ScheduleDayItem(calendar.getTime());
-
-        day1.addLecture(
-                "SoT",
-                "R1_2.79",
-                "srk",
-                new TimeDTO(10, 30),
-                new TimeDTO(12, 00)
-        );
-
-        day1.addLecture(
-                "pes",
-                "R1_2.40",
-                "pes",
-                new TimeDTO(12, 45),
-                new TimeDTO(14, 15)
-        );
-
-        calendar.add(Calendar.DAY_OF_MONTH, NEXT_DAY);
-        ScheduleDayItem day2 = new ScheduleDayItem(calendar.getTime());
-
-        calendar.add(Calendar.DAY_OF_MONTH, NEXT_DAY);
-        ScheduleDayItem day3 = new ScheduleDayItem(calendar.getTime());
-
-        calendar.add(Calendar.DAY_OF_MONTH, NEXT_DAY);
-        ScheduleDayItem day4 = new ScheduleDayItem(calendar.getTime());
-
-        calendar.add(Calendar.DAY_OF_MONTH, NEXT_DAY);
-        ScheduleDayItem day5 = new ScheduleDayItem(calendar.getTime());
-
-        scheduleItems = new ArrayList<>();
-
-        scheduleItems.add(day1);
-        scheduleItems.add(day2);
-        scheduleItems.add(day3);
-        scheduleItems.add(day4);
-        scheduleItems.add(day5);
-
-        ListView lv = findViewById(R.id.schedule_days);
-        lv.setAdapter(new ScheduleDayAdapter(this, scheduleItems));
-
         Button btnReadNews = findViewById(R.id.read_news_button);
         btnReadNews.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
                 startActivity(intent);
             }
         });
+
+        // Alternatief was geweest om de login activity als eerst te starten en na succesvolle login
+        // een main activity aan te maken met token als extra.
 
         // FINAL (get token)
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
@@ -106,9 +60,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
     public void viewSchedule(View view) {
         Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
 
-        // Pass the first schedule item (today)
-        // Later add functionality to go next day and back.
-        ScheduleDayItem today = scheduleItems.get(0);
+        ScheduleDayItem today = schedule.getToday();
         scheduleIntent.putExtra("todaysScheduleItem", today);
 
         startActivity(scheduleIntent);
@@ -122,16 +74,30 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
                 String result = data.getStringExtra("token");
                 fontysToken = result;
 
+                // Used to copy token for testing in postman.
+                System.out.println(fontysToken);
+
                 // Get person's information
                 PersonTask personTask = new PersonTask(this);
                 personTask.execute(fontysToken);
+
+                // Get all the schedule items per day.
+                ScheduleItemTask scheduleItemTask = new ScheduleItemTask(this);
+                scheduleItemTask.execute(fontysToken);
             }
         }
     }
 
     @Override
-    public void SetPersonDetails(Person person) {
+    public void setPersonDetails(Person person) {
         TextView welcomeText = findViewById(R.id.welcome);
         welcomeText.setText("Welcome " + person.toString() + "!");
+    }
+
+    @Override
+    public void setScheduleItems(Schedule schedule) {
+        this.schedule = schedule;
+        ListView lv = findViewById(R.id.schedule_days);
+        lv.setAdapter(new ScheduleDayAdapter(this, schedule.getScheduleDays()));
     }
 }

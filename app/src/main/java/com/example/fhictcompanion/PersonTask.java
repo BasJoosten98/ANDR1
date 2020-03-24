@@ -59,6 +59,6 @@ public class PersonTask extends AsyncTask<String, Void, String> {
         }
 
         Person student = new Person(givenName, surName);
-        context.SetPersonDetails(student);
+        context.setPersonDetails(student);
     }
 }

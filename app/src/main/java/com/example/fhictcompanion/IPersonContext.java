@@ -1,5 +1,5 @@
 package com.example.fhictcompanion;
 
 interface IPersonContext {
-    void SetPersonDetails(Person person);
+    void setPersonDetails(Person person);
 }

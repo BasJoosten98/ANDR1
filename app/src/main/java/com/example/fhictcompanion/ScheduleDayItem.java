@@ -1,5 +1,7 @@
 package com.example.fhictcompanion;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,74 +17,41 @@ import java.util.Random;
  * These will be supplied on a per week basis for the companion app.
  */
 public class ScheduleDayItem implements Serializable {
-    private static int MIN_NR_LECTURES = 3;
-    private static int MAX_NR_LECTURES = 5;
-
-    private static Random rng = new Random();
-
-    private Date date;
-    private int numberOfLectures;
+    private Calendar calendar;
     private List<Lecture> lectures;
 
-    public ScheduleDayItem(Date date) {
-        this(date, getRandomNumberOfLectures());
-
+    public ScheduleDayItem(Calendar calendar) {
+        this.calendar = calendar;
         lectures = new ArrayList<>();
     }
 
-    public ScheduleDayItem(Date date, int numberOfCourses) {
-        this.date = date;
-        this.numberOfLectures = numberOfCourses;
-    }
-
-    public boolean addLecture(String subject, String room, String teacher, TimeDTO start, TimeDTO end) {
-        Calendar startsAt = Calendar.getInstance();
-        setDateTime(startsAt, start);
-
-        Calendar endsAt = Calendar.getInstance();
-        setDateTime(endsAt, end);
-
-        lectures.add(new Lecture(subject, room, teacher, startsAt, endsAt));
-        return true;
-    }
-
-    private void setDateTime(Calendar dateTime, TimeDTO time) {
-        dateTime.setTime(getDate());
-
-        dateTime.set(Calendar.HOUR_OF_DAY, time.hours);
-        dateTime.set(Calendar.MINUTE, time.minutes);
-    }
-
-    private static int getRandomNumberOfLectures() {
-        int shift = MIN_NR_LECTURES;
-        int maxInc = MAX_NR_LECTURES - MIN_NR_LECTURES + 1;
-
-        return rng.nextInt(maxInc) + shift;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public String getDay() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        return sdf.format(date);
+    public void addLecture(Lecture lecture) {
+        lectures.add(lecture);
     }
 
     public int getNumberOfLectures() {
-        if (lectures.size() == 0) {
-            return numberOfLectures;
-        }
-
         return lectures.size();
-    }
-
-    public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(getDate());
     }
 
     public List<Lecture> getLectures() {
         return lectures;
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public String getDay() {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+
+        return sdf.format(calendar.getTime());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        return sdf.format(calendar.getTime());
     }
 }
