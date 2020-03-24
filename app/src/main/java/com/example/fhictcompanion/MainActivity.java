@@ -32,14 +32,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView dateDisplay = findViewById(R.id.day_date);
-
-        SimpleDateFormat dayOfWeek = new SimpleDateFormat("EEEE");
-        SimpleDateFormat dayOfMonth = new SimpleDateFormat("d");
-        SimpleDateFormat month = new SimpleDateFormat("MMMM");
-        SimpleDateFormat year = new SimpleDateFormat("yyyy");
-
-        dateDisplay.setText("Today is " + dayOfWeek.format(TODAY) + ", " + dayOfMonth.format(TODAY) + " " + month.format(TODAY) + " " + year.format(TODAY));
+        displayTodaysDate();
 
         calendar = Calendar.getInstance();
         calendar.setTime(TODAY);
@@ -84,17 +77,6 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
 
         ListView lv = findViewById(R.id.schedule_days);
         lv.setAdapter(new ScheduleDayAdapter(this, scheduleItems));
-    }
-
-    public void viewSchedule(View view) {
-        Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
-
-        // Pass the first schedule item (today)
-        // Later add functionality to go next day and back.
-        ScheduleDayItem today = scheduleItems.get(0);
-        scheduleIntent.putExtra("todaysScheduleItem", today);
-
-        startActivity(scheduleIntent);
 
         Button btnReadNews = findViewById(R.id.read_news_button);
         btnReadNews.setOnClickListener(new View.OnClickListener() {
@@ -106,9 +88,30 @@ public class MainActivity extends AppCompatActivity implements IPersonContext {
             }
         });
 
-        //FINAL (get token)
+        // FINAL (get token)
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
         startActivityForResult(intent, REQUESTCODE_GET_TOKEN);
+    }
+
+    private void displayTodaysDate() {
+        TextView dateDisplay = findViewById(R.id.day_date);
+        SimpleDateFormat dayOfWeek = new SimpleDateFormat("EEEE");
+        SimpleDateFormat dayOfMonth = new SimpleDateFormat("d");
+        SimpleDateFormat month = new SimpleDateFormat("MMMM");
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+
+        dateDisplay.setText("Today is " + dayOfWeek.format(TODAY) + ", " + dayOfMonth.format(TODAY) + " " + month.format(TODAY) + " " + year.format(TODAY));
+    }
+
+    public void viewSchedule(View view) {
+        Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
+
+        // Pass the first schedule item (today)
+        // Later add functionality to go next day and back.
+        ScheduleDayItem today = scheduleItems.get(0);
+        scheduleIntent.putExtra("todaysScheduleItem", today);
+
+        startActivity(scheduleIntent);
     }
 
     @Override
