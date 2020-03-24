@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPersonContext {
     private static final Date TODAY = new Date();
 
     private int REQUESTCODE_GET_TOKEN = 1;
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         //FINAL (get token)
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
         startActivityForResult(intent, REQUESTCODE_GET_TOKEN);
@@ -55,7 +54,17 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String result = data.getStringExtra("token");
                 fontysToken = result;
+
+                // Get person's information
+                PersonTask personTask = new PersonTask(this);
+                personTask.execute(fontysToken);
             }
         }
+    }
+
+    @Override
+    public void SetPersonDetails(Person person) {
+        TextView welcomeText = findViewById(R.id.welcome);
+        welcomeText.setText("Welcome " + person.toString() + "!");
     }
 }
