@@ -82,7 +82,7 @@ class ScheduleItemTask extends AsyncTask<String, Void, String> {
         Calendar calendar = Calendar.getInstance();
 
         try {
-            date = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(dateTime[0].concat(" " + dateTime[1]));
+            date = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(dateTime[0].concat(" " + dateTime[1]));
             calendar.setTime(date);
         } catch (ParseException e) {
             e.printStackTrace();
