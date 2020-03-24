@@ -1,12 +1,14 @@
 package com.example.fhictcompanion;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Schedule {
-    List<ScheduleDayItem> scheduleDays = new ArrayList<>();
+public class Schedule implements Serializable {
+    private int nextDay = 0;
+    private List<ScheduleDayItem> scheduleDays = new ArrayList<>();
 
     public void addLecture(String subject, String room, String teacher, Calendar startsAt, Calendar endsAt) {
         ScheduleDayItem matchingDay = findDay(startsAt);
@@ -44,5 +46,19 @@ public class Schedule {
         calendar.setTime(new Date());
 
         return findDay(calendar);
+    }
+
+    public ScheduleDayItem getNextDay() {
+        int numberOfDays = scheduleDays.size();
+        int numberOfWeekDays = 5;
+
+        if (numberOfDays > 0 && (nextDay % numberOfWeekDays) <= numberOfDays) {
+            ScheduleDayItem day = scheduleDays.get(nextDay % numberOfWeekDays);
+            nextDay++;
+
+            return day;
+        }
+
+        return null;
     }
 }

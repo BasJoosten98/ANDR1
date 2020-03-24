@@ -53,6 +53,7 @@
         android:id="@+id/next"
         android:layout_width="395dp"
         android:layout_height="wrap_content"
+        android:onClick="nextDay"
         android:text="Next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

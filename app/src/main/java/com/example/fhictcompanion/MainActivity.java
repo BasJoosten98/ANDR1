@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
 
         ScheduleDayItem today = schedule.getToday();
-        scheduleIntent.putExtra("todaysScheduleItem", today);
+        scheduleIntent.putExtra("schedule", schedule);
 
         startActivity(scheduleIntent);
     }
@@ -73,9 +73,6 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
             if (resultCode == RESULT_OK) {
                 String result = data.getStringExtra("token");
                 fontysToken = result;
-
-                // Used to copy token for testing in postman.
-                System.out.println(fontysToken);
 
                 // Get person's information
                 PersonTask personTask = new PersonTask(this);
