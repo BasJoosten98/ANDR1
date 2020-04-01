@@ -56,6 +56,7 @@ public class JSONTaskNews extends AsyncTask<String, Void, List<NewsPost>> {
                     String title = news.getString("title");
                     String author = news.getString("author");
                     String content = news.getString("content");
+                    String link = news.getString("link");
 
                     Drawable image = null;
                     String imageUrl = null;
@@ -71,7 +72,7 @@ public class JSONTaskNews extends AsyncTask<String, Void, List<NewsPost>> {
                         }
                     }
 
-                    NewsPost newsPost = new NewsPost(title, author, content, image);
+                    NewsPost newsPost = new NewsPost(title, author, content, link, image);
                     result.add(newsPost);
                 }
             }

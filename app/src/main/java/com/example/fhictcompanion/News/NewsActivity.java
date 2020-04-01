@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.fhictcompanion.R;
@@ -38,6 +41,21 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
         Intent sender = getIntent();
         fontysToken = sender.getStringExtra("token");
         listViewNews = findViewById(R.id.lvFontysNews);
+
+        listViewNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getItemAtPosition(position);
+                if(item != null){
+                    if(item instanceof NewsPost){
+                        NewsPost newsPost = (NewsPost)item;
+                        Uri websiteUri = Uri.parse(newsPost.getLink());
+                        Intent intent = new Intent(Intent.ACTION_VIEW, websiteUri);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
 
         loadNews();
     }
