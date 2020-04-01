@@ -1,8 +1,6 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.News;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.example.fhictcompanion.R;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class CustomNewsListAdapter extends BaseAdapter {
@@ -47,13 +46,19 @@ public class CustomNewsListAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.list_item_news_post, parent, false);
         }
 
+        TextView tvID = convertView.findViewById(R.id.tvNewsPostID);
         TextView tvTitle = convertView.findViewById(R.id.tvNewsPostTitle);
         TextView tvAuthor = convertView.findViewById(R.id.tvNewsPostAuthor);
         TextView tvContent = convertView.findViewById(R.id.tvNewsPostContent);
+        ImageView ivImage = convertView.findViewById(R.id.ivNewsPostImage);
 
+        tvID.setText("Post #" + (position + 1));
         tvTitle.setText(news.get(position).getTitle());
         tvAuthor.setText(news.get(position).getAuthor());
         tvContent.setText(Html.fromHtml(news.get(position).getContent()));
+        if(news.get(position).getImage() != null) {
+            ivImage.setImageDrawable(news.get(position).getImage());
+        }
 
         return convertView;
     }

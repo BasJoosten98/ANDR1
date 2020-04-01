@@ -10,16 +10,22 @@ import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import com.example.fhictcompanion.News.ITaskReceiver;
+import com.example.fhictcompanion.News.JSONTaskNews;
+import com.example.fhictcompanion.News.NewsActivity;
+import com.example.fhictcompanion.News.NewsPost;
 
-public class MainActivity extends AppCompatActivity implements IPersonContext, IScheduleContext {
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity implements IPersonContext, IScheduleContext, ITaskReceiver {
     private static final Date TODAY = new Date();
 
     private Schedule schedule;
 
     private int REQUESTCODE_GET_TOKEN = 1;
+    private int REQUESTCODE_GET_NEWS = 2;
     private String fontysToken;
 
     @Override
@@ -81,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 // Get all the schedule items per day.
                 ScheduleItemTask scheduleItemTask = new ScheduleItemTask(this);
                 scheduleItemTask.execute(fontysToken);
+
+                //Get amount of news posts
+                new JSONTaskNews(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
             }
         }
     }
@@ -96,5 +105,18 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         this.schedule = schedule;
         ListView lv = findViewById(R.id.schedule_days);
         lv.setAdapter(new ScheduleDayAdapter(this, schedule.getScheduleDays()));
+    }
+
+    @Override
+    public void OnTaskReceived(Object data, int requestCode) {
+        if(REQUESTCODE_GET_NEWS == requestCode){
+            if(data != null){
+                if(data instanceof ArrayList){
+                    ArrayList<NewsPost> newsPosts = (ArrayList<NewsPost>)data;
+                    TextView tvPostAmount = findViewById(R.id.news_amount);
+                    tvPostAmount.setText("There are " + newsPosts.size() + " news posts!");
+                }
+            }
+        }
     }
 }
