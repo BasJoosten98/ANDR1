@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.fhictcompanion.News.ITaskReceiver;
 import com.example.fhictcompanion.News.JSONTaskNews;
+import com.example.fhictcompanion.News.JSONTaskNewsAmount;
 import com.example.fhictcompanion.News.NewsActivity;
 import com.example.fhictcompanion.News.NewsPost;
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 scheduleItemTask.execute(fontysToken);
 
                 //Get amount of news posts
-                new JSONTaskNews(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
+                new JSONTaskNewsAmount(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
             }
         }
     }
@@ -111,10 +112,10 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     public void OnTaskReceived(Object data, int requestCode) {
         if(REQUESTCODE_GET_NEWS == requestCode){
             if(data != null){
-                if(data instanceof ArrayList){
-                    ArrayList<NewsPost> newsPosts = (ArrayList<NewsPost>)data;
+                if(data instanceof Integer){
+                    int amount = (Integer)data;
                     TextView tvPostAmount = findViewById(R.id.news_amount);
-                    tvPostAmount.setText("There are " + newsPosts.size() + " news posts!");
+                    tvPostAmount.setText("There are " + amount + " news posts!");
                 }
             }
         }
