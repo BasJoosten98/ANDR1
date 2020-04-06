@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,24 @@ public class NewsFragment extends Fragment {
                         startActivity(intent);
                     }
                 }
+            }
+        });
+        listViewNews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getItemAtPosition(position);
+                if(item != null){
+                    if(item instanceof NewsPost){
+                        NewsPost newsPost = (NewsPost)item;
+                        //Uri websiteUri = Uri.parse(newsPost.getLink());
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Fontys News article"); //this will be used as the subject in mails for example
+                        intent.putExtra(android.content.Intent.EXTRA_TEXT, "Fontys News: " + newsPost.getTitle() + " - " + newsPost.getLink());
+                        intent.setType("text/plain");
+                        startActivity(Intent.createChooser(intent, "Send Fontys news to friend")); //title will be shown in app chooser
+                    }
+                }
+                return true;
             }
         });
 
