@@ -86,13 +86,13 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
                     fragTrans.replace(R.id.layoutNews, fragment, "MyFrag");
                     fragTrans.commit();
 
+                    return;
                     //progressDialog.dismiss();
                 }
             }
-            else {
-                loadingFragment.SetText("Retrieving Fontys news failed!");
-                loadingFragment.HideBar();
-            }
+            loadingFragment.SetText("Retrieving Fontys news failed!");
+            loadingFragment.HideBar();
+
         }
     }
 }

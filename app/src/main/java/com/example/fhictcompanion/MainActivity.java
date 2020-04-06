@@ -115,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 if(data instanceof Integer){
                     int amount = (Integer)data;
                     TextView tvPostAmount = findViewById(R.id.news_amount);
-                    tvPostAmount.setText("There are " + amount + " news posts!");
+                    if(amount <= -1){tvPostAmount.setText("No news posts could be retrieved");}
+                    else {tvPostAmount.setText("There are " + amount + " news posts!");}
                 }
             }
         }
