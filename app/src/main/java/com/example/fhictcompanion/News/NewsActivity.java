@@ -1,7 +1,11 @@
 package com.example.fhictcompanion.News;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.fhictcompanion.R;
+import com.example.fhictcompanion.TokenFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,9 +32,9 @@ import java.util.Scanner;
 
 public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
 
-
-    private ListView listViewNews;
+    //private ProgressDialog progressDialog;
     private String fontysToken;
+    private LoadingFragment loadingFragment;
 
     private int REQUESTCODE_GET_NEWS = 5;
 
@@ -40,22 +45,23 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
 
         Intent sender = getIntent();
         fontysToken = sender.getStringExtra("token");
-        listViewNews = findViewById(R.id.lvFontysNews);
 
-        listViewNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object item = parent.getItemAtPosition(position);
-                if(item != null){
-                    if(item instanceof NewsPost){
-                        NewsPost newsPost = (NewsPost)item;
-                        Uri websiteUri = Uri.parse(newsPost.getLink());
-                        Intent intent = new Intent(Intent.ACTION_VIEW, websiteUri);
-                        startActivity(intent);
-                    }
-                }
-            }
-        });
+        //Add or replace fragment in container
+        FragmentManager fragManager = getSupportFragmentManager();
+        FragmentTransaction fragTrans = fragManager.beginTransaction();
+        LoadingFragment fragment = new LoadingFragment("Retrieving Fontys news...", true);
+        loadingFragment = fragment;
+        fragTrans.add(R.id.layoutNews, fragment, "MyFrag");
+        fragTrans.commit();
+
+        /*
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Retrieving Fontys news...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+         */
 
         loadNews();
     }
@@ -64,9 +70,7 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
         new JSONTaskNews(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
     }
 
-    private void setListView(List<NewsPost> posts){
-        listViewNews.setAdapter(new CustomNewsListAdapter(getApplicationContext(), posts));
-    }
+
 
     @Override
     public void OnTaskReceived(Object data, int requestCode) {
@@ -74,8 +78,20 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
             if(data != null){
                 if(data instanceof ArrayList){
                     ArrayList<NewsPost> newsPosts = (ArrayList<NewsPost>)data;
-                    setListView(newsPosts);
+
+                    //Add or replace fragment in container
+                    FragmentManager fragManager = getSupportFragmentManager();
+                    FragmentTransaction fragTrans = fragManager.beginTransaction();
+                    NewsFragment fragment = new NewsFragment(newsPosts);
+                    fragTrans.replace(R.id.layoutNews, fragment, "MyFrag");
+                    fragTrans.commit();
+
+                    //progressDialog.dismiss();
                 }
+            }
+            else {
+                loadingFragment.SetText("Retrieving Fontys news failed!");
+                loadingFragment.HideBar();
             }
         }
     }
