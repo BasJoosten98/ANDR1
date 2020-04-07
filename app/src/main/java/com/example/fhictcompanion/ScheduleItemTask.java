@@ -1,6 +1,5 @@
 package com.example.fhictcompanion;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
@@ -13,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;

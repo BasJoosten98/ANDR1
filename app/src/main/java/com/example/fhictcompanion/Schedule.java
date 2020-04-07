@@ -49,11 +49,10 @@ public class Schedule implements Serializable {
     }
 
     public ScheduleDayItem getNextDay() {
-        int numberOfDays = scheduleDays.size();
-        int numberOfWeekDays = 5;
+        int numberOfDays = getScheduleDays().size();
 
-        if (numberOfDays > 0 && (nextDay % numberOfWeekDays) <= numberOfDays) {
-            ScheduleDayItem day = scheduleDays.get(nextDay % numberOfWeekDays);
+        if (numberOfDays > 0) {
+            ScheduleDayItem day = scheduleDays.get(nextDay % numberOfDays);
             nextDay++;
 
             return day;
