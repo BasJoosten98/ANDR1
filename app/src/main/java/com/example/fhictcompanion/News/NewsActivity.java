@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -43,34 +44,55 @@ public class NewsActivity extends AppCompatActivity implements ITaskReceiver {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
+        //GET EXTRA's FROM SENDER
         Intent sender = getIntent();
         fontysToken = sender.getStringExtra("token");
+        Parcelable parcelables[] = sender.getParcelableArrayExtra("posts");
 
-        //Add or replace fragment in container
-        FragmentManager fragManager = getSupportFragmentManager();
-        FragmentTransaction fragTrans = fragManager.beginTransaction();
-        LoadingFragment fragment = new LoadingFragment("Retrieving Fontys news...", true);
-        loadingFragment = fragment;
-        fragTrans.add(R.id.layoutNews, fragment, "MyFrag");
-        fragTrans.commit();
+        if(parcelables != null) { //IF EXTRA's CONTAINS POSTS, USE THEM!
 
-        /*
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Retrieving Fontys news...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-         */
+            //TRANSLATE PARCELABLES TO POSTS
+            List<NewsPost> newsPosts = new ArrayList<>();
+            for (int i = 0; i < parcelables.length; i++) {
+                NewsPost post = (NewsPost) parcelables[i];
+                post.DownloadImage();
+                newsPosts.add(post);
+            }
 
-        loadNews();
+            //Add or replace fragment in container
+            FragmentManager fragManager = getSupportFragmentManager();
+            FragmentTransaction fragTrans = fragManager.beginTransaction();
+            NewsFragment fragment = new NewsFragment(newsPosts);
+            fragTrans.add(R.id.layoutNews, fragment, "MyFrag");
+            fragTrans.commit();
+
+        }
+        else { //ELSE RETRIEVE POSTS FROM THE FONTYS API
+
+            //Add or replace fragment in container
+            FragmentManager fragManager = getSupportFragmentManager();
+            FragmentTransaction fragTrans = fragManager.beginTransaction();
+            LoadingFragment fragment = new LoadingFragment("Retrieving Fontys news...", true);
+            loadingFragment = fragment;
+            fragTrans.add(R.id.layoutNews, fragment, "MyFrag");
+            fragTrans.commit();
+
+            /* //SHOW DIALOG FOR THAT THE POSTS ARE BEING RETRIEVED
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Retrieving Fontys news...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+             */
+
+            loadNews();
+        }
     }
 
     private void loadNews(){
         new JSONTaskNews(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
     }
-
-
 
     @Override
     public void OnTaskReceived(Object data, int requestCode) {

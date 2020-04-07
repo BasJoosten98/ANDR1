@@ -2,8 +2,15 @@ package com.example.fhictcompanion;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -19,6 +26,7 @@ import com.example.fhictcompanion.News.NewsPost;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements IPersonContext, IScheduleContext, ITaskReceiver {
     private static final Date TODAY = new Date();
@@ -26,7 +34,8 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     private Schedule schedule;
 
     private int REQUESTCODE_GET_TOKEN = 1;
-    private int REQUESTCODE_GET_NEWS = 2;
+    private int REQUESTCODE_GET_NEWS_AMOUNT = 2;
+    private int REQUESTCODE_GET_NEWS = 3;
     private String fontysToken;
 
     @Override
@@ -45,13 +54,25 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 startActivity(intent);
             }
         });
+        btnReadNews.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String title = "Fontys news downloading";
+                String content = "Fontys news is being downloaded...";
+                showNotification(title, content, null);
+                new JSONTaskNews(MainActivity.this, REQUESTCODE_GET_NEWS).execute(fontysToken);
+                return true;
+            }
+        });
 
         // Alternatief was geweest om de login activity als eerst te starten en na succesvolle login
         // een main activity aan te maken met token als extra.
 
         // FINAL (get token)
+
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
         startActivityForResult(intent, REQUESTCODE_GET_TOKEN);
+
     }
 
     private void displayTodaysDate() {
@@ -90,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 scheduleItemTask.execute(fontysToken);
 
                 //Get amount of news posts
-                new JSONTaskNewsAmount(this, REQUESTCODE_GET_NEWS).execute(fontysToken);
+                new JSONTaskNewsAmount(this, REQUESTCODE_GET_NEWS_AMOUNT).execute(fontysToken);
             }
         }
     }
@@ -110,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
 
     @Override
     public void OnTaskReceived(Object data, int requestCode) {
-        if(REQUESTCODE_GET_NEWS == requestCode){
+        if(REQUESTCODE_GET_NEWS_AMOUNT == requestCode){
             if(data != null){
                 if(data instanceof Integer){
                     int amount = (Integer)data;
@@ -120,5 +141,59 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 }
             }
         }
+        else if(REQUESTCODE_GET_NEWS == requestCode){
+            if(data != null){
+                if(data instanceof ArrayList){
+                    List<NewsPost> list = (ArrayList<NewsPost>)data;
+                    NewsPost newsPosts[] = list.toArray(new NewsPost[list.size()]);
+                    Intent intent = new Intent(this, NewsActivity.class);
+
+                    try {
+                        intent.putExtra("posts", newsPosts);
+                        intent.putExtra("token", fontysToken);
+                        String title = "Fontys news downloaded";
+                        String content = "Click here to see " + list.size() + " news posts!";
+                        showNotification(title, content, intent);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+            }
+            String title = "Fontys news failure";
+            String content = "Downloading Fontys news failed!";
+            showNotification(title, content, null);
+        }
+    }
+
+    private void showNotification(String title, String content, Intent intent){
+
+        //SETTING MANAGER AND CHANNEL
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel nc = new NotificationChannel("abc", "NotificationShower", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(nc);
+        }
+
+        //SETTING NOTIFICATION SETTINGS
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "abc");
+        builder.setSmallIcon(R.mipmap.ic_launcher_round);
+        builder.setContentTitle(title);
+        builder.setContentText(content);
+        builder.setAutoCancel(true);
+
+        //SETTING INTENT THAT NEEDS TO BE SHOWN WHEN NOTIFICATION IS CLICKED
+        //intent = new Intent(this, ServicesActivity.class);
+        if(intent != null) {
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            builder.setContentIntent(pendingIntent);
+        }
+
+        //BUILDING AND SENDING NOTIFICATION
+        Notification notification = null;
+        notification = builder.build();
+        notificationManager.notify(9999, notification);
+
     }
 }
