@@ -3,16 +3,16 @@ package com.example.fhictcompanion.Schedule;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fhictcompanion.R;
-import com.example.fhictcompanion.Schedule.DayLecturesAdapter;
-import com.example.fhictcompanion.Schedule.Schedule;
-import com.example.fhictcompanion.Schedule.ScheduleDayItem;
 
 public class ScheduleActivity extends AppCompatActivity {
     Schedule schedule;
@@ -40,7 +40,10 @@ public class ScheduleActivity extends AppCompatActivity {
         date.setText(scheduleDay.toString());
         dayOfTheWeek.setText(scheduleDay.getDay());
 
-        ListView lv = findViewById(R.id.lecture_list);
-        lv.setAdapter(new DayLecturesAdapter(this, scheduleDay.getLectures()));
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        ScheduleFragment fragment = new ScheduleFragment(scheduleDay);
+        transaction.replace(R.id.schedule_fragment_container, fragment, "schedule_frag");
+        transaction.commit();
     }
 }
