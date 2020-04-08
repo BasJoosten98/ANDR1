@@ -1,4 +1,4 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.Schedule;
 
 import java.io.Serializable;
 import java.util.ArrayList;

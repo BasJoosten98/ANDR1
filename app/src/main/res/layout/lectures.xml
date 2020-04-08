@@ -44,7 +44,7 @@
 
         <fragment
             android:id="@+id/schedule_fragment"
-            android:name="com.example.fhictcompanion.ScheduleFragment"
+            android:name="com.example.fhictcompanion.Schedule.ScheduleFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>

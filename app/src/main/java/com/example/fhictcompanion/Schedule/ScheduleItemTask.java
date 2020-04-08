@@ -1,6 +1,9 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.Schedule;
 
 import android.os.AsyncTask;
+
+import com.example.fhictcompanion.Schedule.IScheduleContext;
+import com.example.fhictcompanion.Schedule.Schedule;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
-class ScheduleItemTask extends AsyncTask<String, Void, String> {
+public class ScheduleItemTask extends AsyncTask<String, Void, String> {
     private IScheduleContext context;
 
     public ScheduleItemTask(IScheduleContext context) {
