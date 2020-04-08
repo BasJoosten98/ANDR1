@@ -45,7 +45,7 @@ public class ScheduleFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                ScheduleDayItemCDFragment fragment = new ScheduleDayItemCDFragment();
+                ScheduleDayItemCDFragment fragment = new ScheduleDayItemCDFragment(scheduleDay.getLectures().get(position));
                 transaction.replace(R.id.schedule_fragment_container, fragment, "schedule_frag");
                 transaction.commit();
                 return false;
