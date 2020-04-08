@@ -60,4 +60,22 @@ public class Schedule implements Serializable {
 
         return null;
     }
+
+    public void setStartDay(ScheduleDayItem dayItem) {
+        List<ScheduleDayItem> scheduleDays = getScheduleDays();
+
+        if (scheduleDays.size() > 0) {
+            nextDay = scheduleDays.indexOf(dayItem);
+        }
+    }
+
+    public ScheduleDayItem getDayAt(int index) {
+        List<ScheduleDayItem> scheduleDays = getScheduleDays();
+
+        if (index >= 0 && index < scheduleDays.size()) {
+            return scheduleDays.get(index);
+        }
+
+        return null;
+    }
 }
