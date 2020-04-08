@@ -22,6 +22,15 @@ import com.example.fhictcompanion.News.JSONTaskNews;
 import com.example.fhictcompanion.News.JSONTaskNewsAmount;
 import com.example.fhictcompanion.News.NewsActivity;
 import com.example.fhictcompanion.News.NewsPost;
+import com.example.fhictcompanion.Person.IPersonContext;
+import com.example.fhictcompanion.Person.Person;
+import com.example.fhictcompanion.Person.PersonTask;
+import com.example.fhictcompanion.Schedule.IScheduleContext;
+import com.example.fhictcompanion.Schedule.Schedule;
+import com.example.fhictcompanion.Schedule.ScheduleActivity;
+import com.example.fhictcompanion.Schedule.ScheduleDayAdapter;
+import com.example.fhictcompanion.Schedule.ScheduleDayItem;
+import com.example.fhictcompanion.Schedule.ScheduleItemTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     private int REQUESTCODE_GET_TOKEN = 1;
     private int REQUESTCODE_GET_NEWS_AMOUNT = 2;
     private int REQUESTCODE_GET_NEWS = 3;
+    
     private String fontysToken;
 
     @Override
@@ -148,18 +158,14 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 if(data instanceof ArrayList){
                     List<NewsPost> list = (ArrayList<NewsPost>)data;
                     NewsPost newsPosts[] = list.toArray(new NewsPost[list.size()]);
-                    Intent intent = new Intent(this, NewsActivity.class);
 
-                    try {
-                        intent.putExtra("posts", newsPosts);
-                        intent.putExtra("token", fontysToken);
-                        String title = "Fontys news downloaded";
-                        String content = "Click here to see " + list.size() + " news posts!";
-                        showNotification(title, content, intent);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    Intent intent = new Intent(this, NewsActivity.class);
+                    intent.putExtra("posts", newsPosts); //without byte array image (because > 1MB)
+                    intent.putExtra("token", fontysToken);
+
+                    String title = "Fontys news downloaded";
+                    String content = "Click here to see " + list.size() + " news posts!";
+                    showNotification(title, content, intent);
                     return;
                 }
             }
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         //SETTING MANAGER AND CHANNEL
         NotificationManager notificationManager = (NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel nc = new NotificationChannel("abc", "NotificationShower", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel nc = new NotificationChannel("abc", "FHICT companion notifier", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(nc);
         }
 
@@ -186,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         builder.setAutoCancel(true);
 
         //SETTING INTENT THAT NEEDS TO BE SHOWN WHEN NOTIFICATION IS CLICKED
-        //intent = new Intent(this, ServicesActivity.class);
+        //THE PENDINGINTENT CAN NOT CARRY A INTENT WHICH IS BIGGER THAN 1MB IN SIZE!
         if(intent != null) {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             builder.setContentIntent(pendingIntent);
@@ -196,6 +202,5 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         Notification notification = null;
         notification = builder.build();
         notificationManager.notify(9999, notification);
-
     }
 }

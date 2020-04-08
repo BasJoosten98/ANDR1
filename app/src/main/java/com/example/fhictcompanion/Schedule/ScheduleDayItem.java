@@ -1,4 +1,4 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.Schedule;
 
 import androidx.annotation.NonNull;
 
@@ -6,9 +6,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This class is required to hold all the scheduled lectures and hours

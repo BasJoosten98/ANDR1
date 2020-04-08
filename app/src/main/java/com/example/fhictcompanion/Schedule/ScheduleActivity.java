@@ -1,4 +1,4 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.Schedule;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,11 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.fhictcompanion.R;
+import com.example.fhictcompanion.Schedule.DayLecturesAdapter;
+import com.example.fhictcompanion.Schedule.Schedule;
+import com.example.fhictcompanion.Schedule.ScheduleDayItem;
 
 public class ScheduleActivity extends AppCompatActivity {
     Schedule schedule;

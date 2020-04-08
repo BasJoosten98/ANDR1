@@ -1,6 +1,5 @@
-package com.example.fhictcompanion;
+package com.example.fhictcompanion.Person;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONException;
