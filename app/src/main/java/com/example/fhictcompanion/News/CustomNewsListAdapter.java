@@ -26,7 +26,6 @@ public class CustomNewsListAdapter extends BaseAdapter {
     public CustomNewsListAdapter(Context context, List<NewsPost> news){
         this.news = news;
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
 
     @Override
@@ -60,9 +59,7 @@ public class CustomNewsListAdapter extends BaseAdapter {
         tvTitle.setText(news.get(position).getTitle());
         tvAuthor.setText(news.get(position).getAuthor());
         tvContent.setText(Html.fromHtml(news.get(position).getContent()));
-        if(news.get(position).getImage() != null) {
-            ivImage.setImageDrawable(news.get(position).getImage());
-        }
+        ivImage.setImageBitmap(news.get(position).getImage()); //if image is null, it will simply display nothing
 
         return convertView;
     }

@@ -1,6 +1,7 @@
 package com.example.fhictcompanion.News;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
@@ -52,27 +53,32 @@ public class JSONTaskNews extends AsyncTask<String, Void, List<NewsPost>> {
             if(jsonString != null){
                 JSONArray jsonArray = new JSONArray(jsonString);
                 for(int i = 0; i < jsonArray.length(); i++) {
+
                     JSONObject news = jsonArray.getJSONObject(i);
+
                     String title = news.getString("title");
                     String author = news.getString("author");
                     String content = news.getString("content");
                     String link = news.getString("link");
 
-                    Drawable image = null;
                     String imageUrl = null;
                     if(news.has("image")){imageUrl = news.getString("image");}
                     else if(news.has("thumbnail")){imageUrl = news.getString("thumbnail");}
 
+                    Bitmap image = null;
                     if(imageUrl != null){
                         try {
-                            InputStream inputStream = (InputStream) new URL(imageUrl).getContent();
-                            image = Drawable.createFromStream(inputStream, "src name");
+                            URL imgUrl = new URL(imageUrl);
+                            HttpURLConnection connectionImage = (HttpURLConnection)imgUrl.openConnection();
+                            connectionImage.connect();
+                            InputStream isImage = connectionImage.getInputStream();
+                            image = BitmapFactory.decodeStream(isImage);
                         }catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    NewsPost newsPost = new NewsPost(title, author, content, link, image);
+                    NewsPost newsPost = new NewsPost(title, author, content, link, image, imageUrl);
                     result.add(newsPost);
                 }
             }

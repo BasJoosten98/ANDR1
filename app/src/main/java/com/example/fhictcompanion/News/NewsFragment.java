@@ -31,7 +31,6 @@ public class NewsFragment extends Fragment {
         newsPosts = list;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +53,7 @@ public class NewsFragment extends Fragment {
                 }
             }
         });
+
         listViewNews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
