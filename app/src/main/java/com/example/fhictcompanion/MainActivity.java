@@ -86,12 +86,14 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     }
 
     public void viewSchedule(View view) {
-        Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
+        if (schedule != null && schedule.getScheduleDays().size() > 0) {
+            Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
 
-        ScheduleDayItem today = schedule.getToday();
-        scheduleIntent.putExtra("schedule", schedule);
+            ScheduleDayItem today = schedule.getToday();
+            scheduleIntent.putExtra("schedule", schedule);
 
-        startActivity(scheduleIntent);
+            startActivity(scheduleIntent);
+        }
     }
 
     @Override
