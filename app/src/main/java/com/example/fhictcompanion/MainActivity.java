@@ -3,6 +3,8 @@ package com.example.fhictcompanion;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,6 +15,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,6 +33,7 @@ import com.example.fhictcompanion.Schedule.Schedule;
 import com.example.fhictcompanion.Schedule.ScheduleActivity;
 import com.example.fhictcompanion.Schedule.ScheduleDayAdapter;
 import com.example.fhictcompanion.Schedule.ScheduleDayItem;
+import com.example.fhictcompanion.Schedule.ScheduleFragment;
 import com.example.fhictcompanion.Schedule.ScheduleItemTask;
 
 import java.text.SimpleDateFormat;
@@ -79,10 +83,8 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         // een main activity aan te maken met token als extra.
 
         // FINAL (get token)
-
         Intent intent = new Intent(MainActivity.this, FontysLoginActivity.class);
         startActivityForResult(intent, REQUESTCODE_GET_TOKEN);
-
     }
 
     private void displayTodaysDate() {
@@ -97,13 +99,19 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
 
     public void viewSchedule(View view) {
         if (schedule != null && schedule.getScheduleDays().size() > 0) {
-            Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
-
             ScheduleDayItem today = schedule.getToday();
-            scheduleIntent.putExtra("schedule", schedule);
 
-            startActivity(scheduleIntent);
+            startScheduleActivityAt(today);
         }
+    }
+
+    private void startScheduleActivityAt(ScheduleDayItem day) {
+        Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
+
+        schedule.setStartDay(day);
+
+        scheduleIntent.putExtra("schedule", schedule);
+        startActivity(scheduleIntent);
     }
 
     @Override
@@ -135,10 +143,17 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     }
 
     @Override
-    public void setScheduleItems(Schedule schedule) {
+    public void setScheduleItems(final Schedule schedule) {
         this.schedule = schedule;
         ListView lv = findViewById(R.id.schedule_days);
         lv.setAdapter(new ScheduleDayAdapter(this, schedule.getScheduleDays()));
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                startScheduleActivityAt(schedule.getDayAt(position));
+                return false;
+            }
+        });
     }
 
     @Override
