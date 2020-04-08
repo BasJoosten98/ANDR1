@@ -3,8 +3,6 @@ package com.example.fhictcompanion;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -33,7 +31,6 @@ import com.example.fhictcompanion.Schedule.Schedule;
 import com.example.fhictcompanion.Schedule.ScheduleActivity;
 import com.example.fhictcompanion.Schedule.ScheduleDayAdapter;
 import com.example.fhictcompanion.Schedule.ScheduleDayItem;
-import com.example.fhictcompanion.Schedule.ScheduleFragment;
 import com.example.fhictcompanion.Schedule.ScheduleItemTask;
 
 import java.text.SimpleDateFormat;
@@ -44,7 +41,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements IPersonContext, IScheduleContext, ITaskReceiver {
     private static final Date TODAY = new Date();
 
-    private Schedule schedule;
+    public static Schedule schedule;
 
     private int REQUESTCODE_GET_TOKEN = 1;
     private int REQUESTCODE_GET_NEWS_AMOUNT = 2;
@@ -109,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
 
         schedule.setStartDay(day);
-
-        scheduleIntent.putExtra("schedule", schedule);
         startActivity(scheduleIntent);
     }
 
@@ -145,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
     @Override
     public void setScheduleItems(final Schedule schedule) {
         this.schedule = schedule;
+
         ListView lv = findViewById(R.id.schedule_days);
         lv.setAdapter(new ScheduleDayAdapter(this, schedule.getScheduleDays()));
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -154,6 +150,9 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
                 return false;
             }
         });
+
+        // Most recent changes have been processed thus set flag to false.
+        this.schedule.setUpdated(false);
     }
 
     @Override
@@ -217,5 +216,17 @@ public class MainActivity extends AppCompatActivity implements IPersonContext, I
         Notification notification = null;
         notification = builder.build();
         notificationManager.notify(9999, notification);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Update the adapter view to display correct number
+        // of lectures if any changes took place (thus in case
+        // some lecture was deleted from schedule by student).
+        if (schedule != null && schedule.isUpdated()) {
+            setScheduleItems(schedule);
+        }
     }
 }

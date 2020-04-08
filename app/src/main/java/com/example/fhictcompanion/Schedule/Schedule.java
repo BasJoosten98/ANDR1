@@ -9,6 +9,7 @@ import java.util.List;
 public class Schedule implements Serializable {
     private int nextDay = 0;
     private List<ScheduleDayItem> scheduleDays = new ArrayList<>();
+    private boolean updated;
 
     public void addLecture(String subject, String room, String teacher, Calendar startsAt, Calendar endsAt) {
         ScheduleDayItem matchingDay = findDay(startsAt);
@@ -74,6 +75,37 @@ public class Schedule implements Serializable {
 
         if (index >= 0 && index < scheduleDays.size()) {
             return scheduleDays.get(index);
+        }
+
+        return null;
+    }
+
+    public boolean deleteLecture(Lecture lecture) {
+        for (ScheduleDayItem scheduleDay: getScheduleDays()) {
+            List<Lecture> lectures = scheduleDay.getLectures();
+
+            if (lectures.contains(lecture)) {
+                lectures.remove(lecture);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(boolean updated) {
+        this.updated = updated;
+    }
+
+    public ScheduleDayItem dayBelongingTo(Lecture lecture) {
+        for (ScheduleDayItem dayItem: getScheduleDays()) {
+            if (dayItem.getLectures().contains(lecture)) {
+                return dayItem;
+            }
         }
 
         return null;
